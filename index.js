@@ -5,6 +5,7 @@ import bodyParser from 'body-parser'
 import multer from 'multer'
 import path from 'path'
 import cros from 'cors'
+import { domainToASCII } from 'url'
 
 
 // serve file
@@ -216,27 +217,40 @@ app.get("/api/classes", (req, res) => {
 })
 
 // section add
-app.post("/api/sections", bodyParser.json(), (req, res)=>{
+app.post("/api/sections", bodyParser.json(), (req, res) => {
     const sql = `insert into section_list (section_name) value (?)`
-    const {sectionname} = req.body
+    const { sectionname } = req.body
     InsertData(sql, [sectionname], res)
 })
 
 // show section
-app.get("/api/sections", (req, res)=>{
+app.get("/api/sections", (req, res) => {
     GetData(res, "section_list")
 })
 
 // assign teacher add
-app.post("/api/assignTeachers", bodyParser.json(), (req, res)=>{
+app.post("/api/assignTeachers", bodyParser.json(), (req, res) => {
     const sql = `insert into assign_teacher (class_name, section_name, teacher_name) value(?, ?, ?)`
-    const {classname, sectionname, teachername} = req.body
+    const { classname, sectionname, teachername } = req.body
     InsertData(sql, [classname, sectionname, teachername], res)
 })
 
 // show assign teacher
-app.get("/api/assignTeachers", (req, res)=>{
+app.get("/api/assignTeachers", (req, res) => {
     GetData(res, "assign_teacher")
+})
+
+
+
+
+// attendence 
+app.post("/api/attendance", bodyParser.json() ,(req, res) => {
+    const sql = `
+  INSERT INTO student_attendance 
+  (admission_no, roll_no, name, date, attendance, entry_time, exit_time, note) 
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    const {admissionNo, rollNo, name, data, attendance, entryTime, exitTime, note} = req.body
+    InsertData(sql, [admissionNo, rollNo, name, data, attendance, entryTime, exitTime, note], res)
 })
 
 // server start here
